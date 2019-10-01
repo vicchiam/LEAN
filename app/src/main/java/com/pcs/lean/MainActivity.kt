@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     allowStateLoss = false,
                     containerViewId = R.id.fragment_container
                 )
+                setTitle("Configuración")
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
