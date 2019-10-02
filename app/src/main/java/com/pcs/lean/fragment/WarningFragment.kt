@@ -27,11 +27,11 @@ class WarningFragment : Fragment(){
     ): View? {
         val view = inflater.inflate(R.layout.fragment_warning, container, false)
 
-        var test = arrayOf("Rahul", "Jack", "Rajeev", "Aryan", "Rashmi")
-
-        spinner = view.findViewById(R.id.lineas_spinner)
-        val arrayAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item, test)
-        spinner.adapter = arrayAdapter
+        val data = emptyArray<String>()
+        val adapter = ArrayAdapter(context!!, R.layout.spinner_item_selected, data)
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        spinner = view.findViewById(R.id.spinner_linea)
+        spinner.adapter = adapter
 
         getServerData()
 
@@ -41,12 +41,13 @@ class WarningFragment : Fragment(){
     private fun getServerData(){
         prefs = Prefs(context!!)
         var url = prefs?.settingsPath ?: ""
+        var center: String = (prefs?.settingsCenter).toString()
 
         if(url.isNotEmpty()){
             Router._GET(
                 context = context!!,
                 url = url,
-                params = mapOf("action" to "get-lineas", "centro" to "0"),
+                params = mapOf("action" to "get-lineas", "centro" to (center+1)),
                 responseListener = { response ->
                     Log.d("RESPONSE", response)
                 },

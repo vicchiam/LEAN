@@ -2,10 +2,13 @@ package com.pcs.lean.fragment
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
@@ -15,6 +18,7 @@ import kotlinx.android.synthetic.main.fragment_setting.view.*
 
 class SettingFragment : Fragment(){
 
+    private lateinit var spinner: Spinner
     private lateinit var editText: EditText
 
     private var prefs :Prefs? = null
@@ -31,8 +35,16 @@ class SettingFragment : Fragment(){
         }
 
         prefs = Prefs(context!!)
-        var url = prefs!!.settingsPath
 
+        val position = prefs!!.settingsCenter
+        val data = resources.getStringArray(R.array.centers);
+        val adapter = ArrayAdapter(context!!, R.layout.spinner_item_selected, data)
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        spinner = view.findViewById(R.id.spinner_center)
+        spinner.adapter = adapter
+        spinner.setSelection((position-1))
+
+        var url = prefs!!.settingsPath
         editText = view.findViewById(R.id.edit_router)
         editText.setText(url)
 
@@ -55,6 +67,9 @@ class SettingFragment : Fragment(){
 
     private fun save(){
         if(isValidForm()){
+            var position: Int = spinner.selectedItemPosition
+            prefs!!.settingsCenter = (position+1)
+
             var url = editText.text.toString()
             prefs!!.settingsPath = url
             Snackbar.make(view!!,"Guardado correctamente", Snackbar.LENGTH_SHORT).show()
