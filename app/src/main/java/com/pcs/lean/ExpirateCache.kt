@@ -14,12 +14,12 @@ class ExpirableCache(private val flushInterval: Long = TimeUnit.MINUTES.toMillis
     }
 
     fun remove(key: Any){
-        recycle()
+        //recycle()
         this.cache.remove(key)
     }
 
     fun get(key: Any): Any?{
-        recycle()
+        //recycle()
         return this.cache[key]
     }
 

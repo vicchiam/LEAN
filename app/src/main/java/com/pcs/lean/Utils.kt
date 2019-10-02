@@ -1,7 +1,9 @@
 package com.pcs.lean
 
 import android.content.Context
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
 class Utils{
@@ -28,6 +30,12 @@ class Utils{
                 return cal.time
             }
             return Date()
+        }
+
+        fun _closeKeyboard(context: Context, activity: AppCompatActivity){
+            val imm =
+                context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(activity!!.currentFocus!!.windowToken, 0)
         }
     }
 

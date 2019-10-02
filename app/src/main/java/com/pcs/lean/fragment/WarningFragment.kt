@@ -2,16 +2,12 @@ package com.pcs.lean.fragment
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.pcs.lean.*
@@ -37,27 +33,36 @@ class WarningFragment : Fragment(){
     ): View? {
         val view = inflater.inflate(R.layout.fragment_warning, container, false)
 
-        mainActivity.warning=mainActivity.warning ?: Warning(Date(),0,"")
-        makeEditTextDate(view, R.id.edit_date, mainActivity.warning!!.date)
-        val spinner: Spinner = view.findViewById(R.id.spinner_linea)
-        spinner.setSelection(mainActivity.warning!!.line)
-
-        var linearLayout: LinearLayout = view.findViewById(R.id.fragment_warning)
-        linearLayout.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                val imm =
-                    context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(activity!!.currentFocus!!.windowToken, 0)
-
-                return v?.onTouchEvent(event) ?: true
-            }
-        })
-
-
-
-        getLines()
+        init(view)
 
         return view
+    }
+
+    private fun init(view: View){
+        mainActivity.warning=mainActivity.warning ?: Warning(Date(),0,"")
+
+        makeEditTextDate(view, R.id.edit_date, mainActivity.warning!!.date)
+
+        val spinner: Spinner = view.findViewById(R.id.spinner_linea)
+        spinner.setSelection(mainActivity.warning!!.line)
+        spinner.setOnTouchListener{ _, _ ->
+            Utils._closeKeyboard(context!!, mainActivity)
+            false
+        }
+
+        val linearLayout: LinearLayout = view.findViewById(R.id.fragment_warning)
+        linearLayout.setOnTouchListener{ _, _ ->
+            Utils._closeKeyboard(context!!, mainActivity)
+            true
+        }
+
+        if(mainActivity.cache.get("lines")==null){
+            getLines()
+        }
+        else{
+            val aux: List<String> = (mainActivity.cache.get("lines") as List<String>)
+            makeSpinner(view!!, R.id.spinner_linea, aux, mainActivity.warning!!.line)
+        }
     }
 
     private fun EditText.onRightDrawableClicked(onClicked: (view: EditText) -> Unit) {
@@ -76,19 +81,18 @@ class WarningFragment : Fragment(){
     }
 
     private fun makeEditTextDate(view: View, resource: Int, date: Date = Date()){
-        val sdf = SimpleDateFormat("dd/M/yyyy")
+        val sdf = SimpleDateFormat("dd/M/yyyy", Locale.forLanguageTag("ES"))
         val currentDate = sdf.format(date)
-        var editText: EditText = view.findViewById(resource)
+        val editText: EditText = view.findViewById(resource)
         editText.setText(currentDate)
-        val dateSetListener = object : DatePickerDialog.OnDateSetListener {
-            override fun onDateSet(view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int) {
-                var aux: String=dayOfMonth.toString().padStart(2,'0')+"/"+monthOfYear.toString().padStart(2,'0')+"/"+year.toString()
+        val dateSetListener =
+            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                val aux: String=dayOfMonth.toString().padStart(2,'0')+"/"+monthOfYear.toString().padStart(2,'0')+"/"+year.toString()
                 editText.setText(aux)
                 mainActivity.warning!!.date=Utils._StringToDate(aux)
             }
-        }
         editText.onRightDrawableClicked {
-            var cal = Calendar.getInstance()
+            val cal = Calendar.getInstance()
             cal.time = Utils._StringToDate(editText.text.toString())
             DatePickerDialog(context!!,
                 dateSetListener,
@@ -101,7 +105,7 @@ class WarningFragment : Fragment(){
     private fun makeSpinner(view: View, resource: Int, data: List<String>, defaultPosition: Int = 0){
         val adapter = ArrayAdapter(context!!, R.layout.spinner_item_selected, data)
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
-        var spinner : Spinner = view.findViewById(resource)
+        val spinner : Spinner = view.findViewById(resource)
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -111,13 +115,6 @@ class WarningFragment : Fragment(){
             }
         }
         spinner.setSelection(defaultPosition)
-    }
-
-    private fun makeEditOFs(view: View, resource: Int, text: String){
-        var editText: EditText=view.findViewById(resource)
-        editText.onRightDrawableClicked {
-
-        }
     }
 
     private fun getLines(){
@@ -140,11 +137,12 @@ class WarningFragment : Fragment(){
     }
 
     private fun responseLines( response: Map<String,Any> ){
-        var data = response.get("data")
+        val data = response["data"]
         if (data is List<*>) {
             val aux: MutableList<String> =
                 data.filterIsInstance<String>().toMutableList()
             aux.add(0, "Seleccionar Linea")
+            mainActivity.cache.set("lines", aux)
             makeSpinner(view!!, R.id.spinner_linea, aux, mainActivity.warning!!.line)
         } else {
             error("Error en el formato de los datos")
@@ -152,20 +150,11 @@ class WarningFragment : Fragment(){
     }
 
     private fun error(err: String){
-        Log.d("ERROR", err)
         Snackbar.make(
-            this.view!!,
-            err,
-            Snackbar.LENGTH_SHORT
-        )
+            view!!,
+            "Error: "+err,
+            Snackbar.LENGTH_LONG
+        ).show()
     }
-
-    private fun getOFs(linea: String){
-
-    }
-
-
-
-
 
 }
