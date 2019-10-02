@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:hint="Path hasta el router" />
+            android:hint="URL del servidor" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

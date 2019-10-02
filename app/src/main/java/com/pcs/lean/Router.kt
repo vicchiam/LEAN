@@ -1,10 +1,14 @@
 package com.pcs.lean
 
 import android.content.Context
+import android.util.Log
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.google.gson.Gson
+import com.google.gson.JsonParseException
+import com.google.gson.reflect.TypeToken
 
 class Router{
 
@@ -26,15 +30,27 @@ class Router{
             queue.add(request)
         }
 
-        fun _GETJSON(context: Context, url: String, params: Map<String, String>, responseListener: (String) -> Unit, errorListener: (String) -> Unit){
-            var fullURL = Router.makeURL(context, url, params);
+        fun _GETJSON(context: Context, url: String, params: Map<String, String>, responseListener: (Map<String,Any>) -> Unit, errorListener: (String) -> Unit){
+            var fullURL = Router.makeURL(context, url, params)
+
+            Log.d("URL", fullURL)
 
             val queue = Volley.newRequestQueue(context)
             val request = StringRequest(
                 Request.Method.GET,
                 fullURL,
                 Response.Listener<String> { response ->
-                    responseListener(response)
+                    Log.d("RESPONSE", response)
+                    var map: Map<String, Any>
+                    try {
+                        map = Gson().fromJson(
+                            response, object : TypeToken<Map<String, Any>>() {}.type
+                        )
+                        responseListener(map)
+                    }
+                    catch(e: JsonParseException){
+                        errorListener(e.message.toString())
+                    }
                 },
                 Response.ErrorListener { err ->
                     errorListener(err.toString())

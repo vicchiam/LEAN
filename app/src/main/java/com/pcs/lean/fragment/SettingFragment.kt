@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.pcs.lean.Prefs
 import com.pcs.lean.R
+import com.pcs.lean.Utils
 import kotlinx.android.synthetic.main.fragment_setting.view.*
 
 class SettingFragment : Fragment(){
@@ -42,7 +43,7 @@ class SettingFragment : Fragment(){
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
         spinner = view.findViewById(R.id.spinner_center)
         spinner.adapter = adapter
-        spinner.setSelection((position-1))
+        spinner.setSelection(position)
 
         var url = prefs!!.settingsPath
         editText = view.findViewById(R.id.edit_router)
@@ -53,13 +54,7 @@ class SettingFragment : Fragment(){
 
     private fun isValidForm() :Boolean {
         if(editText.text.isEmpty()){
-            val builder = AlertDialog.Builder(this.context!!)
-            builder.setTitle("Advertencia")
-            builder.setMessage(("Debes indicar un path"))
-            builder.setNeutralButton("Aceptar"){ dialog, _ ->
-                dialog.cancel()
-            }
-            builder.show()
+            Utils._Alert(context!!, "Debes indicar una URL")
             return false
         }
         return true
@@ -68,7 +63,7 @@ class SettingFragment : Fragment(){
     private fun save(){
         if(isValidForm()){
             var position: Int = spinner.selectedItemPosition
-            prefs!!.settingsCenter = (position+1)
+            prefs!!.settingsCenter = position
 
             var url = editText.text.toString()
             prefs!!.settingsPath = url
