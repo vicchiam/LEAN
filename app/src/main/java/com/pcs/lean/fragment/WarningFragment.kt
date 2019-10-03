@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import com.google.android.material.snackbar.Snackbar
 import com.pcs.lean.*
 import com.pcs.lean.model.Warning
 import java.text.SimpleDateFormat
@@ -18,8 +17,6 @@ import java.util.*
 class WarningFragment : Fragment(){
 
     private lateinit var mainActivity: MainActivity
-
-    private var prefs : Prefs? = null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -33,22 +30,11 @@ class WarningFragment : Fragment(){
     ): View? {
         val view = inflater.inflate(R.layout.fragment_warning, container, false)
 
-        init(view)
-
-        return view
-    }
-
-    private fun init(view: View){
         mainActivity.warning=mainActivity.warning ?: Warning(Date(),0,"")
 
         makeEditTextDate(view, R.id.edit_date, mainActivity.warning!!.date)
 
-        val spinner: Spinner = view.findViewById(R.id.spinner_linea)
-        spinner.setSelection(mainActivity.warning!!.line)
-        spinner.setOnTouchListener{ _, _ ->
-            Utils._closeKeyboard(context!!, mainActivity)
-            false
-        }
+        makeEditTextOFs(view, R.id.edit_ofs)
 
         val linearLayout: LinearLayout = view.findViewById(R.id.fragment_warning)
         linearLayout.setOnTouchListener{ _, _ ->
@@ -56,13 +42,7 @@ class WarningFragment : Fragment(){
             true
         }
 
-        if(mainActivity.cache.get("lines")==null){
-            getLines()
-        }
-        else{
-            val aux: List<String> = (mainActivity.cache.get("lines") as List<String>)
-            makeSpinner(view!!, R.id.spinner_linea, aux, mainActivity.warning!!.line)
-        }
+        return view
     }
 
     private fun EditText.onRightDrawableClicked(onClicked: (view: EditText) -> Unit) {
@@ -102,59 +82,11 @@ class WarningFragment : Fragment(){
         }
     }
 
-    private fun makeSpinner(view: View, resource: Int, data: List<String>, defaultPosition: Int = 0){
-        val adapter = ArrayAdapter(context!!, R.layout.spinner_item_selected, data)
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
-        val spinner : Spinner = view.findViewById(resource)
-        spinner.adapter = adapter
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                mainActivity.warning!!.line = position
-            }
+    private fun makeEditTextOFs(view: View, resource: Int){
+        val editText: EditText = view.findViewById(resource)
+        editText.onRightDrawableClicked {
+            mainActivity.navigateToOFsSelector()
         }
-        spinner.setSelection(defaultPosition)
-    }
-
-    private fun getLines(){
-        prefs = Prefs(context!!)
-        val url = prefs?.settingsPath ?: ""
-        val center: Int = prefs?.settingsCenter ?: 0
-        if (url.isNotEmpty()) {
-            Router._GETJSON(
-                context = context!!,
-                url = url,
-                params = mapOf("action" to "get-lineas", "centro" to center.toString()),
-                responseListener = { response ->
-                    responseLines(response)
-                },
-                errorListener = { err ->
-                    error(err)
-                }
-            )
-        }
-    }
-
-    private fun responseLines( response: Map<String,Any> ){
-        val data = response["data"]
-        if (data is List<*>) {
-            val aux: MutableList<String> =
-                data.filterIsInstance<String>().toMutableList()
-            aux.add(0, "Seleccionar Linea")
-            mainActivity.cache.set("lines", aux)
-            makeSpinner(view!!, R.id.spinner_linea, aux, mainActivity.warning!!.line)
-        } else {
-            error("Error en el formato de los datos")
-        }
-    }
-
-    private fun error(err: String){
-        Snackbar.make(
-            view!!,
-            "Error: "+err,
-            Snackbar.LENGTH_LONG
-        ).show()
     }
 
 }

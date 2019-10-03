@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import java.text.SimpleDateFormat
 import java.util.*
 
 class Utils{
@@ -30,6 +31,11 @@ class Utils{
                 return cal.time
             }
             return Date()
+        }
+
+        fun _DateToString(date: Date): String{
+            var format = SimpleDateFormat("dd/MM/yyyy")
+            return format.format(date);
         }
 
         fun _closeKeyboard(context: Context, activity: AppCompatActivity){

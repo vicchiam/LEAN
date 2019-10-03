@@ -2,8 +2,7 @@ package com.pcs.lean
 
 import android.content.Context
 import android.util.Log
-import com.android.volley.Request
-import com.android.volley.Response
+import com.android.volley.*
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
@@ -53,7 +52,8 @@ class Router{
                     }
                 },
                 Response.ErrorListener { err ->
-                    errorListener(err.toString())
+                    var message: String = error(err)
+                    errorListener(message)
                 }
             )
             queue.add(request)
@@ -72,8 +72,19 @@ class Router{
                 fullUrl = url+"?"+query
             return fullUrl
         }
+
+        private fun error(err: VolleyError): String{
+            if(err is TimeoutError || err is NoConnectionError){
+                return "No se ha podido conectar. Msg:"+err.toString();
+            }
+            else if(err is ServerError){
+                return "Error en el servidor. Msg: "+err.toString()
+            }
+            else if(err is NetworkError){
+                return "Error en la red. Msg:"+err.toString()
+            }
+            return "Error. mensaje:"+err.toString()
+
+        }
     }
-
-
-
 }

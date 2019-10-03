@@ -1,9 +1,10 @@
 package com.pcs.lean
 
+import android.util.Log
 import java.util.concurrent.TimeUnit
 
-class ExpirableCache(private val flushInterval: Long = TimeUnit.MINUTES.toMillis(1)){
-    private var lastFlushTime = System.nanoTime()
+class ExpirableCache(private val flushInterval: Long = 5){
+    private var lastFlushTime = System.currentTimeMillis()
 
     private val cache = HashMap<Any, Any>()
     val size: Int
@@ -14,19 +15,19 @@ class ExpirableCache(private val flushInterval: Long = TimeUnit.MINUTES.toMillis
     }
 
     fun remove(key: Any){
-        //recycle()
+        recycle()
         this.cache.remove(key)
     }
 
     fun get(key: Any): Any?{
-        //recycle()
+        recycle()
         return this.cache[key]
     }
 
     fun clear() = this.cache.clear()
 
     private fun recycle() {
-        val shouldRecycle = System.nanoTime() - lastFlushTime >= TimeUnit.MILLISECONDS.toNanos(flushInterval)
+       val shouldRecycle = (System.currentTimeMillis() - lastFlushTime) >= (flushInterval*60*1000)
         if (!shouldRecycle) return
         clear()
     }

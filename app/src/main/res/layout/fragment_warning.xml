@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/fragment_padding"
     android:orientation="vertical"
     android:id="@+id/fragment_warning"
@@ -18,24 +17,6 @@
         android:inputType="date"
         android:textColor="@color/colorAccent"
         android:drawableRight="@drawable/ic_today"/>
-
-    <Spinner
-        android:id="@+id/spinner_linea"
-        style="@style/Widget.AppCompat.Spinner"
-        android:layout_width="300dp"
-        android:layout_height="?attr/dropdownListPreferredItemHeight"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/spinner_bg"
-        android:dropDownWidth="300dp"
-        android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-        android:popupBackground="@android:color/white"
-        android:popupElevation="3dp"
-        android:stateListAnimator="@drawable/spinner_sla"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
 
     <EditText
         android:id="@+id/edit_ofs"
