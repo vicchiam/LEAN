@@ -33,31 +33,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     var currentFragment: Int =1
 
-   override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-       cache = ExpirableCache(5)
+        cache = ExpirableCache(5)
 
-       var toolbar: Toolbar = findViewById(R.id.toolbar)
-       setSupportActionBar(toolbar)
+        var toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
-       supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-       supportActionBar!!.setDisplayShowHomeEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
 
-       drawerLayout = findViewById(R.id.drawer_layout)
+        drawerLayout = findViewById(R.id.drawer_layout)
 
-       var navView: NavigationView = findViewById(R.id.nav_view)
-       navView.setNavigationItemSelectedListener(this)
+        var navView: NavigationView = findViewById(R.id.nav_view)
+        navView.setNavigationItemSelectedListener(this)
 
-       toolbar.setNavigationOnClickListener{ v ->
+        toolbar.setNavigationOnClickListener{ v ->
            if(currentFragment== FRAGMENT_SELECTOR)
                navigateToHome()
            else if (!drawerLayout.isDrawerOpen(GravityCompat.START))
                drawerLayout.openDrawer(GravityCompat.START)
-       }
+        }
 
-       navigateToHome()
+        navigateToHome()
     }
 
     override fun onBackPressed() {
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     allowStateLoss = false,
                     containerViewId = R.id.fragment_container
                 )
-                setTitle("Historico")
+                title="Historico"
                 currentFragment = FRAGMENT_HISTORY
             }
             R.id.nav_settings -> {
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     allowStateLoss = false,
                     containerViewId = R.id.fragment_container
                 )
-                setTitle("Configuración")
+                title="Configuración"
                 currentFragment = FRAGMENT_SETTINGS
             }
         }
@@ -99,13 +99,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun navigateToHome(){
+    fun navigateToHome(){
         navigateToFragment(
             fragment = WarningFragment(),
             allowStateLoss = false,
             containerViewId = R.id.fragment_container
         )
-        setTitle("Incidencias")
+        title="Incidencias"
         currentFragment = FRAGMENT_WARNING
         changeActionBarButton(1)
     }
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             allowStateLoss = false,
             containerViewId = R.id.fragment_container
         )
-        setTitle("Selección de OF")
+        title="Selección de OF"
         currentFragment = FRAGMENT_SELECTOR
         changeActionBarButton(2)
     }

@@ -3,6 +3,7 @@ package com.pcs.lean.fragment
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -34,11 +35,11 @@ class WarningFragment : Fragment(){
 
         makeEditTextDate(view, R.id.edit_date, mainActivity.warning!!.date)
 
-        makeEditTextOFs(view, R.id.edit_ofs)
+        makeEditTextOFs(view, R.id.edit_ofs, mainActivity.warning!!.of)
 
         val linearLayout: LinearLayout = view.findViewById(R.id.fragment_warning)
         linearLayout.setOnTouchListener{ _, _ ->
-            Utils._closeKeyboard(context!!, mainActivity)
+            Utils.closeKeyboard(context!!, mainActivity)
             true
         }
 
@@ -67,13 +68,15 @@ class WarningFragment : Fragment(){
         editText.setText(currentDate)
         val dateSetListener =
             DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                val aux: String=dayOfMonth.toString().padStart(2,'0')+"/"+monthOfYear.toString().padStart(2,'0')+"/"+year.toString()
+                val aux: String=dayOfMonth.toString().padStart(2,'0')+"/"+(monthOfYear+1).toString().padStart(2,'0')+"/"+year.toString()
                 editText.setText(aux)
-                mainActivity.warning!!.date=Utils._StringToDate(aux)
+                mainActivity.warning!!.date=Utils.stringToDate(aux)
+                resetOf()
             }
         editText.onRightDrawableClicked {
             val cal = Calendar.getInstance()
-            cal.time = Utils._StringToDate(editText.text.toString())
+            cal.time = Utils.stringToDate(editText.text.toString())
+            Log.d("TIME", Utils.stringToDate(editText.text.toString()).toString())
             DatePickerDialog(context!!,
                 dateSetListener,
                 cal.get(Calendar.YEAR),
@@ -82,11 +85,19 @@ class WarningFragment : Fragment(){
         }
     }
 
-    private fun makeEditTextOFs(view: View, resource: Int){
+    private fun makeEditTextOFs(view: View, resource: Int, of: String = ""){
         val editText: EditText = view.findViewById(resource)
+        editText.setText(of)
         editText.onRightDrawableClicked {
             mainActivity.navigateToOFsSelector()
         }
+    }
+
+    private fun resetOf(){
+        mainActivity.cache.remove("OFs")
+        mainActivity.warning!!.of=""
+        val textView: TextView = view!!.findViewById(R.id.edit_ofs)
+        textView.text=""
     }
 
 }

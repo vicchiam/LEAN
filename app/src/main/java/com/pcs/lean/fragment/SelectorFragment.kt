@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ class SelectorFragment: Fragment(){
 
     private lateinit var ofsRecyclerView: RecyclerView
     private val ofsAdapter: OfsAdapter = OfsAdapter()
+    private lateinit var search: SearchView
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -32,6 +34,21 @@ class SelectorFragment: Fragment(){
     ): View? {
         val view = inflater.inflate(R.layout.fragment_selector, container, false)
 
+        search = view.findViewById(R.id.search)
+        search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.i("SEARCH SUB","Llego al querysubmit")
+                ofsAdapter.search(query){}
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                Log.i("SEARCH CHA","Llego al querytextchange")
+                ofsAdapter.search(newText){}
+                return true
+            }
+        })
+
         ofsRecyclerView = view.findViewById(R.id.recyclerView_ofs)
         ofsRecyclerView.setHasFixedSize(true)
         ofsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -40,8 +57,10 @@ class SelectorFragment: Fragment(){
             getOFs()
         }
         else{
-            ofsAdapter.OfsAdapter(mainActivity.cache.get("OFs") as MutableList<OF>, context!!)
+            ofsAdapter.OfsAdapter(this, mainActivity.cache.get("OFs") as MutableList<OF>)
             ofsRecyclerView.adapter = ofsAdapter
+
+            Log.d("SIZE", ofsAdapter.itemCount.toString())
         }
 
         return view
@@ -50,19 +69,29 @@ class SelectorFragment: Fragment(){
     private fun getOFs(){
         val prefs: Prefs? = Prefs(context!!)
         val url = prefs?.settingsPath ?: ""
-        Router.getJSON<List<OF>>(
+
+        Router._GET(
             context = context!!,
             url = url,
-            params = "action=get-ofs&date=${Utils._DateToString(mainActivity.warning!!.date)}",
+            params = "action=get-ofs&date=${Utils.dateToString(mainActivity.warning!!.date)}",
             responseListener = { response ->
-                mainActivity.cache.set("OFs", response)
-                ofsAdapter.OfsAdapter( (response as MutableList<OF>), context!!)
+                val list: List<OF> = Utils.fromJson(response)
+                val mutableList = list.toMutableList()
+                mainActivity.cache.set("OFs", mutableList)
+                ofsAdapter.OfsAdapter(this, mutableList)
                 ofsRecyclerView.adapter = ofsAdapter
+
+                Log.d("SIZE", ofsAdapter.itemCount.toString())
             },
             errorListener = { err ->
-                Utils._Alert(context!!,err)
+                Utils.alert(context!!,err)
             }
         )
     }
 
+    fun setOF(of: OF){
+        Utils.closeKeyboard(context!!, mainActivity)
+        mainActivity.warning!!.of=of.orden
+        mainActivity.navigateToHome()
+    }
 }

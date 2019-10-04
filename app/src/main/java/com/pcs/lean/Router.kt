@@ -13,7 +13,7 @@ class Router{
 
     companion object {
 
-        fun <T: Any> getJSON(context: Context, url: String, params: String, responseListener: (T) -> Unit, errorListener: (String) -> Unit){
+        fun _GET(context: Context, url: String, params: String, responseListener: (String) -> Unit, errorListener: (String) -> Unit){
             val finalUrl = if(params.isEmpty()) url else "$url?$params"
 
             Log.d("URL", finalUrl)
@@ -24,12 +24,10 @@ class Router{
                 finalUrl,
                 Response.Listener<String> { response ->
                     Log.d("RESPONSE", response)
-                    val sType = object: TypeToken<T>() {}.type
-                    val json = Gson().fromJson<T>(response, sType)
-                    responseListener(json)
+                    responseListener(response)
                 },
                 Response.ErrorListener { err ->
-                    error(err)
+                    errorListener(error(err))
                 }
             )
             queue.add(request)

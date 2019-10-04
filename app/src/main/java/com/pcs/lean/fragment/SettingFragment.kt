@@ -1,15 +1,12 @@
 package com.pcs.lean.fragment
 
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.pcs.lean.Prefs
@@ -54,7 +51,7 @@ class SettingFragment : Fragment(){
 
     private fun isValidForm() :Boolean {
         if(editText.text.isEmpty()){
-            Utils._Alert(context!!, "Debes indicar una URL")
+            Utils.alert(context!!, "Debes indicar una URL")
             return false
         }
         return true

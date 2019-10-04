@@ -2,7 +2,6 @@ package com.pcs.lean.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +30,7 @@ class HistoryFragment : Fragment(){
         val spinner: Spinner = view.findViewById(R.id.spinner_linea)
         spinner.setSelection(mainActivity.warning!!.line)
         spinner.setOnTouchListener{ _, _ ->
-            Utils._closeKeyboard(context!!, mainActivity)
+            Utils.closeKeyboard(context!!, mainActivity)
             false
         }
 
@@ -64,18 +63,18 @@ class HistoryFragment : Fragment(){
         val prefs: Prefs? = Prefs(context!!)
         val url = prefs?.settingsPath ?: ""
         val center: Int = prefs?.settingsCenter ?: 0
-        Router.getJSON<List<String>>(
+        Router._GET(
             context = context!!,
             url = url,
             params = "action=get-lineas&centro=$center",
             responseListener = { response ->
-                val list: MutableList<String> = response.toMutableList()
+                val list: MutableList<String> = Utils.fromJson<List<String>>(response).toMutableList()
                 list.add(0, "Seleccionar Linea")
                 mainActivity.cache.set("lines", list)
                 makeSpinner(view!!, R.id.spinner_linea, list, mainActivity.warning!!.line)
             },
             errorListener = { err ->
-                Utils._Alert(context!!,err)
+                Utils.alert(context!!,err)
             }
         )
     }
