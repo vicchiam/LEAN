@@ -1,3 +1,9 @@
 package com.pcs.lean.model
 
-data class OF( val orden: String, val codigo: String, val nombre: String )
+import com.google.gson.annotations.SerializedName
+
+data class OF(
+    @SerializedName("ORDEN") val orden: String,
+    @SerializedName("CODIGO") val codigo: String,
+    @SerializedName("NOMBRE") val nombre: String
+)

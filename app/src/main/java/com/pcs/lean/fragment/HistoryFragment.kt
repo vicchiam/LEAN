@@ -2,6 +2,7 @@ package com.pcs.lean.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,30 +64,20 @@ class HistoryFragment : Fragment(){
         val prefs: Prefs? = Prefs(context!!)
         val url = prefs?.settingsPath ?: ""
         val center: Int = prefs?.settingsCenter ?: 0
-        Router._GETJSON(
+        Router.getJSON<List<String>>(
             context = context!!,
             url = url,
-            params = mapOf("action" to "get-lineas", "centro" to center.toString()),
+            params = "action=get-lineas&centro=$center",
             responseListener = { response ->
-                responseLines(response)
+                val list: MutableList<String> = response.toMutableList()
+                list.add(0, "Seleccionar Linea")
+                mainActivity.cache.set("lines", list)
+                makeSpinner(view!!, R.id.spinner_linea, list, mainActivity.warning!!.line)
             },
             errorListener = { err ->
                 Utils._Alert(context!!,err)
             }
         )
-    }
-
-    private fun responseLines( response: Map<String,Any> ){
-        val data = response["data"]
-        if (data is List<*>) {
-            val aux: MutableList<String> =
-                data.filterIsInstance<String>().toMutableList()
-            aux.add(0, "Seleccionar Linea")
-            mainActivity.cache.set("lines", aux)
-            makeSpinner(view!!, R.id.spinner_linea, aux, mainActivity.warning!!.line)
-        } else {
-            Utils._Alert(context!!,"Error en el formato de los datos")
-        }
     }
 
 }

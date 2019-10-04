@@ -7,11 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.pcs.lean.*
+import com.pcs.lean.adapter.OfsAdapter
+import com.pcs.lean.model.OF
 
 class SelectorFragment: Fragment(){
 
     private lateinit var mainActivity: MainActivity
+
+    private lateinit var ofsRecyclerView: RecyclerView
+    private val ofsAdapter: OfsAdapter = OfsAdapter()
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -25,42 +32,37 @@ class SelectorFragment: Fragment(){
     ): View? {
         val view = inflater.inflate(R.layout.fragment_selector, container, false)
 
+        ofsRecyclerView = view.findViewById(R.id.recyclerView_ofs)
+        ofsRecyclerView.setHasFixedSize(true)
+        ofsRecyclerView.layoutManager = LinearLayoutManager(context)
+
         if(mainActivity.cache.get("OFs")==null){
             getOFs()
+        }
+        else{
+            ofsAdapter.OfsAdapter(mainActivity.cache.get("OFs") as MutableList<OF>, context!!)
+            ofsRecyclerView.adapter = ofsAdapter
         }
 
         return view
     }
 
     private fun getOFs(){
-        val date = mainActivity.warning!!.date
         val prefs: Prefs? = Prefs(context!!)
         val url = prefs?.settingsPath ?: ""
-        Router._GETJSON(
+        Router.getJSON<List<OF>>(
             context = context!!,
             url = url,
-            params = mapOf("action" to "get-ofs", "date" to Utils._DateToString(date)),
+            params = "action=get-ofs&date=${Utils._DateToString(mainActivity.warning!!.date)}",
             responseListener = { response ->
-                responseOFs(response)
+                mainActivity.cache.set("OFs", response)
+                ofsAdapter.OfsAdapter( (response as MutableList<OF>), context!!)
+                ofsRecyclerView.adapter = ofsAdapter
             },
             errorListener = { err ->
                 Utils._Alert(context!!,err)
             }
         )
-    }
-
-    private fun responseOFs( response: Map<String,Any> ){
-        val data = response["data"]
-        if (data is List<*>) {
-            Log.d("TRY",data.toString())
-            for(elem: String in data.filterIsInstance<String>().toList()){
-                Log.d("ELEM",elem);
-            }
-
-            //mainActivity.cache.set("OFs", aux)
-        } else {
-            Utils._Alert(context!!,"Error en el formato de los datos")
-        }
     }
 
 }

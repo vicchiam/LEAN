@@ -12,78 +12,41 @@ import com.google.gson.reflect.TypeToken
 class Router{
 
     companion object {
-        fun _GET(context: Context, url: String, params: Map<String, String>, responseListener: (String) -> Unit, errorListener: (String) -> Unit){
-            var fullURL = Router.makeURL(context, url, params);
+
+        fun <T: Any> getJSON(context: Context, url: String, params: String, responseListener: (T) -> Unit, errorListener: (String) -> Unit){
+            val finalUrl = if(params.isEmpty()) url else "$url?$params"
+
+            Log.d("URL", finalUrl)
 
             val queue = Volley.newRequestQueue(context)
             val request = StringRequest(
                 Request.Method.GET,
-                fullURL,
-                Response.Listener<String> { response ->
-                    responseListener(response)
-                },
-                Response.ErrorListener { err ->
-                    errorListener(err.toString())
-                }
-            )
-            queue.add(request)
-        }
-
-        fun _GETJSON(context: Context, url: String, params: Map<String, String>, responseListener: (Map<String,Any>) -> Unit, errorListener: (String) -> Unit){
-            var fullURL = Router.makeURL(context, url, params)
-
-            Log.d("URL", fullURL)
-
-            val queue = Volley.newRequestQueue(context)
-            val request = StringRequest(
-                Request.Method.GET,
-                fullURL,
+                finalUrl,
                 Response.Listener<String> { response ->
                     Log.d("RESPONSE", response)
-                    var map: Map<String, Any>
-                    try {
-                        map = Gson().fromJson(
-                            response, object : TypeToken<Map<String, Any>>() {}.type
-                        )
-                        responseListener(map)
-                    }
-                    catch(e: JsonParseException){
-                        errorListener(e.message.toString())
-                    }
+                    val sType = object: TypeToken<T>() {}.type
+                    val json = Gson().fromJson<T>(response, sType)
+                    responseListener(json)
                 },
                 Response.ErrorListener { err ->
-                    var message: String = error(err)
-                    errorListener(message)
+                    error(err)
                 }
             )
             queue.add(request)
-        }
 
-        private fun makeURL(context: Context, url: String, params: Map<String, String>): String{
-            var list: List<String> = emptyList()
-            for(key in params.keys){
-                var param = key+"="+params.get(key)
-                list = list.plus(param)
-            }
-            var query = list.joinToString(separator = "&")
-
-            var fullUrl = url
-            if(query.isNotEmpty())
-                fullUrl = url+"?"+query
-            return fullUrl
         }
 
         private fun error(err: VolleyError): String{
             if(err is TimeoutError || err is NoConnectionError){
-                return "No se ha podido conectar. Msg:"+err.toString();
+                return "No se ha podido conectar. Msg: $err"
             }
             else if(err is ServerError){
-                return "Error en el servidor. Msg: "+err.toString()
+                return "Error en el servidor. Msg: $err"
             }
             else if(err is NetworkError){
-                return "Error en la red. Msg:"+err.toString()
+                return "Error en la red. Msg: $err"
             }
-            return "Error. mensaje:"+err.toString()
+            return "Error. mensaje: $err"
 
         }
     }
