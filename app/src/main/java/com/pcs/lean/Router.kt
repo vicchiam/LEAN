@@ -5,9 +5,6 @@ import android.util.Log
 import com.android.volley.*
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.google.gson.Gson
-import com.google.gson.JsonParseException
-import com.google.gson.reflect.TypeToken
 
 class Router{
 
@@ -23,7 +20,6 @@ class Router{
                 Request.Method.GET,
                 finalUrl,
                 Response.Listener<String> { response ->
-                    Log.d("RESPONSE", response)
                     responseListener(response)
                 },
                 Response.ErrorListener { err ->

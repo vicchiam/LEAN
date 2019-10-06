@@ -39,15 +39,15 @@ class HistoryFragment : Fragment(){
         }
         else{
             val aux: List<String> = (mainActivity.cache.get("lines") as List<String>)
-            makeSpinner(view!!, R.id.spinner_linea, aux, mainActivity.warning!!.line)
+            makeSpinner(view!!, aux, mainActivity.warning!!.line)
         }
         return view
     }
 
-    private fun makeSpinner(view: View, resource: Int, data: List<String>, defaultPosition: Int = 0){
+    private fun makeSpinner(view: View, data: List<String>, defaultPosition: Int = 0){
         val adapter = ArrayAdapter(context!!, R.layout.spinner_item_selected, data)
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
-        val spinner : Spinner = view.findViewById(resource)
+        val spinner : Spinner = view.findViewById(R.id.spinner_linea)
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -68,13 +68,17 @@ class HistoryFragment : Fragment(){
             url = url,
             params = "action=get-lineas&centro=$center",
             responseListener = { response ->
-                val list: MutableList<String> = Utils.fromJson<List<String>>(response).toMutableList()
-                list.add(0, "Seleccionar Linea")
-                mainActivity.cache.set("lines", list)
-                makeSpinner(view!!, R.id.spinner_linea, list, mainActivity.warning!!.line)
+                if(context!=null) {
+                    val list: MutableList<String> =
+                        Utils.fromJson<List<String>>(response).toMutableList()
+                    list.add(0, "Seleccionar Linea")
+                    mainActivity.cache.set("lines", list)
+                    makeSpinner(view!!, list, mainActivity.warning!!.line)
+                }
             },
             errorListener = { err ->
-                Utils.alert(context!!,err)
+                if(context!=null)
+                    Utils.alert(context!!,err)
             }
         )
     }

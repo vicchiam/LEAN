@@ -2,7 +2,6 @@ package com.pcs.lean.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import com.pcs.lean.*
 import com.pcs.lean.adapter.OfsAdapter
 import com.pcs.lean.model.OF
 
-class SelectorFragment: Fragment(){
+class SelectOfFragment: Fragment(){
 
     private lateinit var mainActivity: MainActivity
 
@@ -32,18 +31,16 @@ class SelectorFragment: Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_selector, container, false)
+        val view = inflater.inflate(R.layout.fragment_select_of, container, false)
 
         search = view.findViewById(R.id.search)
         search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.i("SEARCH SUB","Llego al querysubmit")
                 ofsAdapter.search(query){}
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                Log.i("SEARCH CHA","Llego al querytextchange")
                 ofsAdapter.search(newText){}
                 return true
             }
@@ -59,8 +56,6 @@ class SelectorFragment: Fragment(){
         else{
             ofsAdapter.OfsAdapter(this, mainActivity.cache.get("OFs") as MutableList<OF>)
             ofsRecyclerView.adapter = ofsAdapter
-
-            Log.d("SIZE", ofsAdapter.itemCount.toString())
         }
 
         return view
@@ -75,16 +70,17 @@ class SelectorFragment: Fragment(){
             url = url,
             params = "action=get-ofs&date=${Utils.dateToString(mainActivity.warning!!.date)}",
             responseListener = { response ->
-                val list: List<OF> = Utils.fromJson(response)
-                val mutableList = list.toMutableList()
-                mainActivity.cache.set("OFs", mutableList)
-                ofsAdapter.OfsAdapter(this, mutableList)
-                ofsRecyclerView.adapter = ofsAdapter
-
-                Log.d("SIZE", ofsAdapter.itemCount.toString())
+                if(context!=null) {
+                    val list: List<OF> = Utils.fromJson(response)
+                    val mutableList = list.toMutableList()
+                    mainActivity.cache.set("OFs", mutableList)
+                    ofsAdapter.OfsAdapter(this, mutableList)
+                    ofsRecyclerView.adapter = ofsAdapter
+                }
             },
             errorListener = { err ->
-                Utils.alert(context!!,err)
+                if(context!=null)
+                    Utils.alert(context!!,err)
             }
         )
     }

@@ -2,27 +2,22 @@ package com.pcs.lean
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import androidx.annotation.IdRes
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 
 import com.google.android.material.navigation.NavigationView
-import com.pcs.lean.fragment.HistoryFragment
-import com.pcs.lean.fragment.SelectorFragment
-import com.pcs.lean.fragment.SettingFragment
-import com.pcs.lean.fragment.WarningFragment
+import com.pcs.lean.fragment.*
 import com.pcs.lean.model.Warning
 
 const val FRAGMENT_WARNING: Int = 1
-const val FRAGMENT_SELECTOR: Int = 2
+const val FRAGMENT_OF_SELECTOR: Int = 2
 const val FRAGMENT_SETTINGS: Int = 3
 const val FRAGMENT_HISTORY: Int = 4
+const val FRAGMENT_INC_SELECTOR=5
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -31,7 +26,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var cache: ExpirableCache
     var warning: Warning? = null
 
-    var currentFragment: Int =1
+    private var currentFragment: Int =1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +34,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         cache = ExpirableCache(5)
 
-        var toolbar: Toolbar = findViewById(R.id.toolbar)
+        initView()
+
+        navigateToHome()
+    }
+
+    private fun initView(){
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -47,24 +48,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawerLayout = findViewById(R.id.drawer_layout)
 
-        var navView: NavigationView = findViewById(R.id.nav_view)
+        val navView: NavigationView = findViewById(R.id.nav_view)
         navView.setNavigationItemSelectedListener(this)
 
-        toolbar.setNavigationOnClickListener{ v ->
-           if(currentFragment== FRAGMENT_SELECTOR)
-               navigateToHome()
-           else if (!drawerLayout.isDrawerOpen(GravityCompat.START))
-               drawerLayout.openDrawer(GravityCompat.START)
+        toolbar.setNavigationOnClickListener{
+            if(currentFragment== FRAGMENT_OF_SELECTOR || currentFragment == FRAGMENT_INC_SELECTOR)
+                navigateToHome()
+            else if (!drawerLayout.isDrawerOpen(GravityCompat.START))
+                drawerLayout.openDrawer(GravityCompat.START)
         }
-
-        navigateToHome()
     }
 
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
-            if(currentFragment== FRAGMENT_SELECTOR)
+            if(currentFragment == FRAGMENT_OF_SELECTOR || currentFragment == FRAGMENT_INC_SELECTOR)
                 navigateToHome()
             else
                 super.onBackPressed()
@@ -112,12 +111,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun navigateToOFsSelector(){
         navigateToFragment(
-            fragment = SelectorFragment(),
+            fragment = SelectOfFragment(),
             allowStateLoss = false,
             containerViewId = R.id.fragment_container
         )
         title="Selección de OF"
-        currentFragment = FRAGMENT_SELECTOR
+        currentFragment = FRAGMENT_OF_SELECTOR
+        changeActionBarButton(2)
+    }
+
+    fun navigateToIncSelector(){
+        navigateToFragment(
+            fragment = SelectIncFragment(),
+            allowStateLoss = false,
+            containerViewId = R.id.fragment_container
+        )
+        title="Selección de Incidebncia"
+        currentFragment = FRAGMENT_INC_SELECTOR
         changeActionBarButton(2)
     }
 

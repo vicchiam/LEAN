@@ -2,4 +2,4 @@ package com.pcs.lean.model
 
 import java.util.*
 
-data class Warning(var date: Date, var line: Int, var of: String)
+data class Warning(var date: Date, var line: Int, var of: String, var incidencia: String)

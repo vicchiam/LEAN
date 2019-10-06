@@ -35,14 +35,14 @@ class SettingFragment : Fragment(){
         prefs = Prefs(context!!)
 
         val position = prefs!!.settingsCenter
-        val data = resources.getStringArray(R.array.centers);
+        val data = resources.getStringArray(R.array.centers)
         val adapter = ArrayAdapter(context!!, R.layout.spinner_item_selected, data)
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
         spinner = view.findViewById(R.id.spinner_center)
         spinner.adapter = adapter
         spinner.setSelection(position)
 
-        var url = prefs!!.settingsPath
+        val url = prefs!!.settingsPath
         editText = view.findViewById(R.id.edit_router)
         editText.setText(url)
 
@@ -59,10 +59,10 @@ class SettingFragment : Fragment(){
 
     private fun save(){
         if(isValidForm()){
-            var position: Int = spinner.selectedItemPosition
+            val position: Int = spinner.selectedItemPosition
             prefs!!.settingsCenter = position
 
-            var url = editText.text.toString()
+            val url = editText.text.toString()
             prefs!!.settingsPath = url
             Snackbar.make(view!!,"Guardado correctamente", Snackbar.LENGTH_SHORT).show()
         }

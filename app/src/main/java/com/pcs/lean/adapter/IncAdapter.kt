@@ -8,29 +8,29 @@ import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pcs.lean.R
-import com.pcs.lean.fragment.SelectOfFragment
-import com.pcs.lean.model.OF
+import com.pcs.lean.fragment.SelectIncFragment
+import com.pcs.lean.model.Incidencia
 
-class OfsAdapter: RecyclerView.Adapter<OfsAdapter.ViewHolder>(), Filterable {
+class IncAdapter: RecyclerView.Adapter<IncAdapter.ViewHolder>(), Filterable {
 
-    private lateinit var selectOfFragment: SelectOfFragment
-    lateinit var searchableList: MutableList<OF>
-    lateinit var originalList: List<OF>
+    private lateinit var selectIncFragment: SelectIncFragment
+    lateinit var searchableList: MutableList<Incidencia>
+    lateinit var originalList: List<Incidencia>
 
-    fun OfsAdapter(selectOfFragment: SelectOfFragment, searchableList: MutableList<OF>){
-        this.selectOfFragment = selectOfFragment
+    fun IncAdapter(selectIncFragment: SelectIncFragment, searchableList: MutableList<Incidencia>){
+        this.selectIncFragment = selectIncFragment
         this.originalList = searchableList
         this.searchableList = ArrayList(searchableList)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = this.searchableList[position]
-        holder.bind(item, selectOfFragment)
+        holder.bind(item, selectIncFragment)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return ViewHolder(layoutInflater.inflate(R.layout.item_ofs_select, parent, false))
+        return ViewHolder(layoutInflater.inflate(R.layout.item_inc_select, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -55,7 +55,7 @@ class OfsAdapter: RecyclerView.Adapter<OfsAdapter.ViewHolder>(), Filterable {
                     searchableList.addAll(originalList)
                 } else {
                     val searchResults = originalList.filter {
-                        it.getSearchCriteria().contains(constraint)
+                        it.getSearchCriteria() == constraint
                     }
                     searchableList.addAll(searchResults)
                 }
@@ -74,17 +74,15 @@ class OfsAdapter: RecyclerView.Adapter<OfsAdapter.ViewHolder>(), Filterable {
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val ordenText: TextView = view.findViewById(R.id.orden)
-        private val codigoText: TextView = view.findViewById(R.id.codigo)
         private val nombreText: TextView = view.findViewById(R.id.nombre)
+        private val descripcionText: TextView = view.findViewById(R.id.descripcion)
 
-        fun bind(of: OF, selectOfFragment: SelectOfFragment){
-            ordenText.text = "OF: ${of.orden}"
-            codigoText.text = "Codigo: ${of.codigo}"
-            nombreText.text = of.nombre ?: "No se puede mostrar"
+        fun bind(inc: Incidencia, selectIncFragment: SelectIncFragment){
+            nombreText.text = inc.nombre
+            descripcionText.text = inc.descripcion
 
             itemView.setOnClickListener{
-                selectOfFragment.setOF(of)
+                selectIncFragment.setInc(inc)
             }
         }
 

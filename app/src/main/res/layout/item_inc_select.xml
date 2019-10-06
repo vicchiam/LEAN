@@ -11,28 +11,19 @@
     android:foreground="?selectableItemBackground">
 
     <TextView
-        android:id="@+id/orden"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorAccent"
-        android:textSize="16sp"
-        android:text="NOrden"/>
-
-    <TextView
-        android:id="@+id/codigo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@id/orden"
-        android:text="Codigo"/>
-
-    <TextView
         android:id="@+id/nombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/orden"
-        android:layout_alignParentLeft="true"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
         android:text="Nombre"/>
+
+    <TextView
+        android:id="@+id/descripcion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nombre"
+        android:layout_alignParentLeft="true"
+        android:text="Descripcion"/>
 
 </RelativeLayout>

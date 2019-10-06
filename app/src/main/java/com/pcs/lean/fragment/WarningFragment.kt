@@ -31,11 +31,11 @@ class WarningFragment : Fragment(){
     ): View? {
         val view = inflater.inflate(R.layout.fragment_warning, container, false)
 
-        mainActivity.warning=mainActivity.warning ?: Warning(Date(),0,"")
+        mainActivity.warning=mainActivity.warning ?: Warning(Date(),0,"", "")
 
-        makeEditTextDate(view, R.id.edit_date, mainActivity.warning!!.date)
-
-        makeEditTextOFs(view, R.id.edit_ofs, mainActivity.warning!!.of)
+        makeEditTextDate(view, mainActivity.warning!!.date)
+        makeEditTextOFs(view, mainActivity.warning!!.of)
+        makeEditTextIncs(view)
 
         val linearLayout: LinearLayout = view.findViewById(R.id.fragment_warning)
         linearLayout.setOnTouchListener{ _, _ ->
@@ -48,6 +48,8 @@ class WarningFragment : Fragment(){
 
     private fun EditText.onRightDrawableClicked(onClicked: (view: EditText) -> Unit) {
         this.setOnTouchListener { v, event ->
+            Utils.closeKeyboard(context, mainActivity)
+
             var hasConsumed = false
             if (v is EditText) {
                 if (event.x >= v.width - v.totalPaddingRight) {
@@ -61,10 +63,10 @@ class WarningFragment : Fragment(){
         }
     }
 
-    private fun makeEditTextDate(view: View, resource: Int, date: Date = Date()){
+    private fun makeEditTextDate(view: View, date: Date = Date()){
         val sdf = SimpleDateFormat("dd/M/yyyy", Locale.forLanguageTag("ES"))
         val currentDate = sdf.format(date)
-        val editText: EditText = view.findViewById(resource)
+        val editText: EditText = view.findViewById(R.id.edit_date)
         editText.setText(currentDate)
         val dateSetListener =
             DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
@@ -85,11 +87,19 @@ class WarningFragment : Fragment(){
         }
     }
 
-    private fun makeEditTextOFs(view: View, resource: Int, of: String = ""){
-        val editText: EditText = view.findViewById(resource)
+    private fun makeEditTextOFs(view: View, of: String = ""){
+        val editText: EditText = view.findViewById(R.id.edit_ofs)
         editText.setText(of)
         editText.onRightDrawableClicked {
             mainActivity.navigateToOFsSelector()
+        }
+    }
+
+    private fun makeEditTextIncs(view: View, incidencia: String = ""){
+        val editText: EditText = view.findViewById(R.id.edit_incidencia)
+        editText.setText(incidencia)
+        editText.onRightDrawableClicked {
+            mainActivity.navigateToIncSelector()
         }
     }
 
