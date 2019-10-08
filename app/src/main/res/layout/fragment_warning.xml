@@ -12,8 +12,6 @@
         android:id="@+id/edit_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="8dp"
         android:inputType="date"
         android:textColor="@color/colorPrimaryText"
         android:drawableRight="@drawable/ic_today"/>
@@ -22,8 +20,6 @@
         android:id="@+id/edit_ofs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="8dp"
         android:layout_marginTop="18dp"
         android:inputType="text"
         android:textColor="@color/colorPrimaryText"
@@ -34,13 +30,38 @@
         android:id="@+id/edit_incidencia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="8dp"
         android:layout_marginTop="18dp"
         android:inputType="text"
         android:textColor="@color/colorPrimaryText"
         android:drawableRight="@drawable/ic_search"
         android:hint="Indique una incidencia"/>
 
+    <EditText
+        android:id="@+id/edit_minutos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:inputType="number"
+        android:hint="Indique los minutos" />
+
+    <EditText
+        android:id="@+id/edit_comentario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:inputType="text"
+        android:hint="Introduce un comentario si lo deseas" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:layout_gravity="end"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:text="Guardar"
+        style="@style/Widget.MaterialComponents.Button"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"/>
 
 </LinearLayout>

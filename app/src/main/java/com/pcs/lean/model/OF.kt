@@ -11,5 +11,9 @@ data class OF(
     fun getSearchCriteria(): String{
         return "$orden $codigo $nombre".toLowerCase()
     }
+    
+    fun isEmpty(): Boolean {
+       return (orden=="" && codigo=="" && nombre=="")
+    }
 
 }

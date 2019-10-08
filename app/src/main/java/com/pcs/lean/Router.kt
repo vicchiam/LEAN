@@ -20,6 +20,7 @@ class Router{
                 Request.Method.GET,
                 finalUrl,
                 Response.Listener<String> { response ->
+                    Log.d("RESPONSE", response)
                     responseListener(response)
                 },
                 Response.ErrorListener { err ->
@@ -28,6 +29,27 @@ class Router{
             )
             queue.add(request)
 
+        }
+
+        fun _POST(context: Context, url: String, params: HashMap<String, String>, responseListener: (String) -> Unit, errorListener: (String) -> Unit){
+            Log.d("URL", url)
+
+            val queue = Volley.newRequestQueue(context)
+            val request = object: StringRequest(
+                Method.POST,
+                url,
+                Response.Listener<String> { response ->
+                    responseListener(response)
+                },
+                Response.ErrorListener { err ->
+                    errorListener(error(err))
+                }
+            ){
+                override fun getParams(): MutableMap<String, String> {
+                    return params
+                }
+            }
+            queue.add(request)
         }
 
         private fun error(err: VolleyError): String{

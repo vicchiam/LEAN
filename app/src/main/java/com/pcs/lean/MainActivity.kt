@@ -2,6 +2,7 @@ package com.pcs.lean
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.Toolbar
@@ -25,18 +26,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     lateinit var cache: ExpirableCache
     var warning: Warning? = null
+    var idApp: Int = 0
 
     private var currentFragment: Int =1
+
+    private lateinit var prefs :Prefs
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        createID()
 
         cache = ExpirableCache(5)
 
         initView()
 
         navigateToHome()
+    }
+
+    private fun createID(){
+        prefs = Prefs(this)
+        idApp = prefs.idApp
+        if(idApp==0){
+            idApp =  (1..1000000).shuffled().first()
+            prefs.idApp = idApp
+        }
+        Log.d("ID_APP", idApp.toString())
     }
 
     private fun initView(){

@@ -9,15 +9,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pcs.lean.R
 import com.pcs.lean.fragment.SelectIncFragment
-import com.pcs.lean.model.Incidencia
+import com.pcs.lean.model.TipoIncidencia
 
 class IncAdapter: RecyclerView.Adapter<IncAdapter.ViewHolder>(), Filterable {
 
     private lateinit var selectIncFragment: SelectIncFragment
-    lateinit var searchableList: MutableList<Incidencia>
-    lateinit var originalList: List<Incidencia>
+    lateinit var searchableList: MutableList<TipoIncidencia>
+    lateinit var originalList: List<TipoIncidencia>
 
-    fun IncAdapter(selectIncFragment: SelectIncFragment, searchableList: MutableList<Incidencia>){
+    fun IncAdapter(selectIncFragment: SelectIncFragment, searchableList: MutableList<TipoIncidencia>){
         this.selectIncFragment = selectIncFragment
         this.originalList = searchableList
         this.searchableList = ArrayList(searchableList)
@@ -77,7 +77,7 @@ class IncAdapter: RecyclerView.Adapter<IncAdapter.ViewHolder>(), Filterable {
         private val nombreText: TextView = view.findViewById(R.id.nombre)
         private val descripcionText: TextView = view.findViewById(R.id.descripcion)
 
-        fun bind(inc: Incidencia, selectIncFragment: SelectIncFragment){
+        fun bind(inc: TipoIncidencia, selectIncFragment: SelectIncFragment){
             nombreText.text = inc.nombre
             descripcionText.text = inc.descripcion
 

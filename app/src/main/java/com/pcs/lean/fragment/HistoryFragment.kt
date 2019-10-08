@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import com.google.gson.JsonSyntaxException
 import com.pcs.lean.*
 
 class HistoryFragment : Fragment(){
@@ -28,7 +30,7 @@ class HistoryFragment : Fragment(){
         val view = inflater.inflate(R.layout.fragment_history, container, false)
 
         val spinner: Spinner = view.findViewById(R.id.spinner_linea)
-        spinner.setSelection(mainActivity.warning!!.line)
+        //spinner.setSelection(mainActivity.warning!!.line)
         spinner.setOnTouchListener{ _, _ ->
             Utils.closeKeyboard(context!!, mainActivity)
             false
@@ -39,7 +41,7 @@ class HistoryFragment : Fragment(){
         }
         else{
             val aux: List<String> = (mainActivity.cache.get("lines") as List<String>)
-            makeSpinner(view!!, aux, mainActivity.warning!!.line)
+            makeSpinner(view!!, aux)
         }
         return view
     }
@@ -53,7 +55,7 @@ class HistoryFragment : Fragment(){
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                mainActivity.warning!!.line = position
+
             }
         }
         spinner.setSelection(defaultPosition)
@@ -63,22 +65,33 @@ class HistoryFragment : Fragment(){
         val prefs: Prefs? = Prefs(context!!)
         val url = prefs?.settingsPath ?: ""
         val center: Int = prefs?.settingsCenter ?: 0
+
+        val dialog: AlertDialog = Utils.modalAlert(mainActivity)
+        dialog.show()
         Router._GET(
             context = context!!,
             url = url,
             params = "action=get-lineas&centro=$center",
             responseListener = { response ->
                 if(context!=null) {
-                    val list: MutableList<String> =
-                        Utils.fromJson<List<String>>(response).toMutableList()
-                    list.add(0, "Seleccionar Linea")
-                    mainActivity.cache.set("lines", list)
-                    makeSpinner(view!!, list, mainActivity.warning!!.line)
+                    try {
+                        val list: MutableList<String> =
+                            Utils.fromJson<List<String>>(response).toMutableList()
+                        list.add(0, "Seleccionar Linea")
+                        mainActivity.cache.set("lines", list)
+                        makeSpinner(view!!, list)
+                    }
+                    catch (ex: JsonSyntaxException){
+                        Utils.alert(context!!,"El formato de la respuesta no es correcto: $response")
+                    }
+                    dialog.dismiss()
                 }
             },
             errorListener = { err ->
-                if(context!=null)
-                    Utils.alert(context!!,err)
+                if(context!=null) {
+                    Utils.alert(context!!, err)
+                    dialog.dismiss()
+                }
             }
         )
     }

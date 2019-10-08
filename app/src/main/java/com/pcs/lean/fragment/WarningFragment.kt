@@ -3,6 +3,8 @@ package com.pcs.lean.fragment
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -11,9 +13,11 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import com.pcs.lean.*
+import com.pcs.lean.model.OF
 import com.pcs.lean.model.Warning
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 class WarningFragment : Fragment(){
 
@@ -31,11 +35,14 @@ class WarningFragment : Fragment(){
     ): View? {
         val view = inflater.inflate(R.layout.fragment_warning, container, false)
 
-        mainActivity.warning=mainActivity.warning ?: Warning(Date(),0,"", "")
+        mainActivity.warning=mainActivity.warning ?: Warning(Date())
 
         makeEditTextDate(view, mainActivity.warning!!.date)
-        makeEditTextOFs(view, mainActivity.warning!!.of)
-        makeEditTextIncs(view)
+        makeEditTextOFs(view, mainActivity.warning!!.of.orden)
+        makeEditTextIncs(view, mainActivity.warning!!.tipoIncidencia.nombre)
+        makeEdiTextMinutes(view, mainActivity.warning!!.minutos)
+        makeEditTextComentario(view, mainActivity.warning!!.comentario)
+        makeSaveButton(view)
 
         val linearLayout: LinearLayout = view.findViewById(R.id.fragment_warning)
         linearLayout.setOnTouchListener{ _, _ ->
@@ -103,11 +110,90 @@ class WarningFragment : Fragment(){
         }
     }
 
+    private fun makeEdiTextMinutes(view: View, num: Int = 0){
+        val editText: EditText = view.findViewById(R.id.edit_minutos)
+        val numText: String = if(num==0)"" else num.toString()
+        editText.setText(numText)
+        editText.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if(s.isNotEmpty())
+                    mainActivity.warning!!.minutos=s.toString().toInt()
+            }
+        })
+    }
+
+    private fun makeEditTextComentario(view: View, comentario: String = ""){
+        val editText: EditText = view.findViewById(R.id.edit_comentario)
+        editText.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if(s.isNotEmpty())
+                    mainActivity.warning!!.comentario=s.toString()
+            }
+        })
+    }
+
+    private fun makeSaveButton(view: View){
+        val buttonSave: Button = view.findViewById(R.id.btn_warning)
+        buttonSave.setOnClickListener{
+            if(!mainActivity.warning!!.isComplete())
+                Utils.alert(context!!, "Faltan campos por rellenar")
+            else
+                saveWarning()
+        }
+    }
+
+    private fun saveWarning(){
+        var dialog = Utils.modalAlert(mainActivity, "Guardando")
+        val params = HashMap<String,String>();
+        params["action"]="add-inc"
+        params["id_dispositivo"]=mainActivity.idApp.toString()
+        params["of"]=mainActivity.warning!!.of.orden
+        params["id_tipo_incidencia"]=mainActivity.warning!!.tipoIncidencia.id.toString()
+        params["minutos"]=mainActivity.warning!!.minutos.toString()
+        params["comentario"]=mainActivity.warning!!.comentario
+
+        val prefs: Prefs? = Prefs(context!!)
+        val url = prefs?.settingsPath ?: ""
+
+        dialog.show()
+        Router._POST(
+            context = context!!,
+            url = url,
+            params = params,
+            responseListener = { response ->
+                if(context!=null) {
+                    if (response == "ok") {
+                        Utils.alert(context!!, "Incidencia guardada correctamente")
+                        resetWarning()
+                    }
+                    dialog.dismiss()
+                }
+            },
+            errorListener = { err ->
+                if(context!=null)
+                    Utils.alert(context!!,err)
+            })
+    }
+
     private fun resetOf(){
         mainActivity.cache.remove("OFs")
-        mainActivity.warning!!.of=""
+        mainActivity.warning!!.of=OF("","","")
         val textView: TextView = view!!.findViewById(R.id.edit_ofs)
         textView.text=""
+    }
+
+    private fun resetWarning(){
+        mainActivity.warning = Warning(Date())
     }
 
 }

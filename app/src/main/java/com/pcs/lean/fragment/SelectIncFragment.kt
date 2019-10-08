@@ -7,13 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Spinner
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.JsonSyntaxException
 import com.pcs.lean.*
 import com.pcs.lean.adapter.IncAdapter
 import com.pcs.lean.adapter.SpinnerAdapter
-import com.pcs.lean.model.Incidencia
+import com.pcs.lean.model.TipoIncidencia
 import com.pcs.lean.model.Zona
 
 class SelectIncFragment: Fragment() {
@@ -22,6 +24,8 @@ class SelectIncFragment: Fragment() {
 
     private lateinit var incRecyclerView: RecyclerView
     private val incAdapter: IncAdapter = IncAdapter()
+
+    private lateinit var dialog: AlertDialog
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -39,6 +43,8 @@ class SelectIncFragment: Fragment() {
         incRecyclerView.setHasFixedSize(true)
         incRecyclerView.layoutManager = LinearLayoutManager(context)
 
+        dialog = Utils.modalAlert(mainActivity)
+
         if(mainActivity.cache.get("zonas")==null)
             getZonas()
         else
@@ -47,9 +53,10 @@ class SelectIncFragment: Fragment() {
         if(mainActivity.cache.get("inc")==null)
             getIncidencias()
         else{
-            incAdapter.IncAdapter(this, (mainActivity.cache.get("inc") as MutableList<Incidencia>) )
+            incAdapter.IncAdapter(this, (mainActivity.cache.get("inc") as MutableList<TipoIncidencia>) )
             incRecyclerView.adapter = incAdapter
         }
+
 
 
         return view
@@ -74,20 +81,30 @@ class SelectIncFragment: Fragment() {
         val prefs: Prefs? = Prefs(context!!)
         val url = prefs?.settingsPath ?: ""
         val center: Int = prefs?.settingsCenter ?: 0
+        if(!dialog.isShowing)
+            dialog.show()
         Router._GET(
             context = context!!,
             url = url,
             params = "action=get-zonas&centro=$center",
             responseListener = { response ->
                 if(context!=null) {
-                    val list: List<Zona> = Utils.fromJson(response)
-                    mainActivity.cache.set("zonas",list)
-                    makeSpinnerZonas(view!!, list)
+                    try {
+                        val list: List<Zona> = Utils.fromJson(response)
+                        mainActivity.cache.set("zonas", list)
+                        makeSpinnerZonas(view!!, list)
+                    }
+                    catch (ex: JsonSyntaxException){
+                        Utils.alert(context!!,"El formato de la respuesta no es correcto: $response")
+                    }
+                    dialog.dismiss()
                 }
             },
             errorListener = { err ->
-                if(context!=null)
-                    Utils.alert(context!!,err)
+                if(context!=null) {
+                    Utils.alert(context!!, err)
+                    dialog.dismiss()
+                }
             }
         )
     }
@@ -96,28 +113,42 @@ class SelectIncFragment: Fragment() {
         val prefs: Prefs? = Prefs(context!!)
         val url = prefs?.settingsPath ?: ""
         val center: Int = prefs?.settingsCenter ?: 0
+        if(!dialog.isShowing)
+            dialog.show()
         Router._GET(
             context = context!!,
             url = url,
             params = "action=get-inc&centro=$center",
             responseListener = { response ->
                 if(context!=null) {
-                    val list: List<Incidencia> = Utils.fromJson(response)
-                    mainActivity.cache.set("inc",list)
+                    try {
+                        val list: List<TipoIncidencia> = Utils.fromJson(response)
+                        mainActivity.cache.set("inc", list)
 
-                    incAdapter.IncAdapter(this, (mainActivity.cache.get("inc") as MutableList<Incidencia>) )
-                    incRecyclerView.adapter = incAdapter
+                        incAdapter.IncAdapter(
+                            this,
+                            (list as MutableList<TipoIncidencia>)
+                        )
+                        incRecyclerView.adapter = incAdapter
+                    }
+                    catch (ex: JsonSyntaxException){
+                        Utils.alert(context!!,"El formato de la respuesta no es correcto: $response")
+                    }
+                    dialog.dismiss()
                 }
             },
             errorListener = { err ->
-                if(context!=null)
-                    Utils.alert(context!!,err)
+                if(context!=null) {
+                    Utils.alert(context!!, err)
+                    dialog.dismiss()
+                }
             }
         )
     }
 
-    fun setInc(incidencia: Incidencia){
-
+    fun setInc(incidencia: TipoIncidencia){
+        mainActivity.warning!!.tipoIncidencia = incidencia
+        mainActivity.navigateToHome()
     }
 
 }

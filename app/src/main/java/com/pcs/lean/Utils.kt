@@ -2,9 +2,11 @@ package com.pcs.lean
 
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
 import java.util.*
@@ -47,7 +49,18 @@ class Utils{
         }
 
         inline fun <reified T> fromJson(jsonString: String): T{
-            return Gson().fromJson<T>(jsonString, object: TypeToken<T>(){}.type)
+            return Gson().fromJson<T>(jsonString, object : TypeToken<T>() {}.type)
+        }
+
+        fun modalAlert(activity: AppCompatActivity, message: String = "Cargando..."): AlertDialog{
+            val builder = AlertDialog.Builder(activity)
+            val dialogView = activity.layoutInflater.inflate(R.layout.progress_dialog, null)
+            val messageTextView = dialogView.findViewById<TextView>(R.id.message)
+            messageTextView.text = message
+            builder.setView(dialogView)
+            builder.setCancelable(false)
+            val dialog = builder.create()
+            return dialog
         }
 
     }
