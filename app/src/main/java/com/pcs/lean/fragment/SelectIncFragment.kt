@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.JsonSyntaxException
 import com.pcs.lean.*
-import com.pcs.lean.adapter.IncAdapter
+import com.pcs.lean.adapter.TypeIncAdapter
 import com.pcs.lean.adapter.SpinnerAdapter
 import com.pcs.lean.model.TipoIncidencia
 import com.pcs.lean.model.Zona
@@ -23,7 +23,7 @@ class SelectIncFragment: Fragment() {
     private lateinit var mainActivity: MainActivity
 
     private lateinit var incRecyclerView: RecyclerView
-    private val incAdapter: IncAdapter = IncAdapter()
+    private val typeIncAdapter: TypeIncAdapter = TypeIncAdapter()
 
     private lateinit var dialog: AlertDialog
 
@@ -50,11 +50,11 @@ class SelectIncFragment: Fragment() {
         else
             makeSpinnerZonas(view, (mainActivity.cache.get("zonas") as List<Zona>))
 
-        if(mainActivity.cache.get("inc")==null)
+        if(mainActivity.cache.get("type-inc")==null)
             getIncidencias()
         else{
-            incAdapter.IncAdapter(this, (mainActivity.cache.get("inc") as MutableList<TipoIncidencia>) )
-            incRecyclerView.adapter = incAdapter
+            typeIncAdapter.IncAdapter(this, (mainActivity.cache.get("inc") as MutableList<TipoIncidencia>) )
+            incRecyclerView.adapter = typeIncAdapter
         }
 
 
@@ -71,7 +71,7 @@ class SelectIncFragment: Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                incAdapter.search(data[position].id.toString()){}
+                typeIncAdapter.search(data[position].id.toString()){}
             }
         }
         spinner.setSelection(defaultPosition)
@@ -118,18 +118,18 @@ class SelectIncFragment: Fragment() {
         Router._GET(
             context = context!!,
             url = url,
-            params = "action=get-inc&centro=$center",
+            params = "action=get-tipo-inc&centro=$center",
             responseListener = { response ->
                 if(context!=null) {
                     try {
                         val list: List<TipoIncidencia> = Utils.fromJson(response)
-                        mainActivity.cache.set("inc", list)
+                        mainActivity.cache.set("type-inc", list)
 
-                        incAdapter.IncAdapter(
+                        typeIncAdapter.IncAdapter(
                             this,
                             (list as MutableList<TipoIncidencia>)
                         )
-                        incRecyclerView.adapter = incAdapter
+                        incRecyclerView.adapter = typeIncAdapter
                     }
                     catch (ex: JsonSyntaxException){
                         Utils.alert(context!!,"El formato de la respuesta no es correcto: $response")
@@ -147,8 +147,8 @@ class SelectIncFragment: Fragment() {
     }
 
     fun setInc(incidencia: TipoIncidencia){
-        mainActivity.warning!!.tipoIncidencia = incidencia
-        mainActivity.navigateToHome()
+        mainActivity.nuevaIncidencia!!.tipoIncidencia = incidencia
+        mainActivity.navigateToNuevaIncidencia()
     }
 
 }

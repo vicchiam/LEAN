@@ -12,20 +12,22 @@ import androidx.fragment.app.Fragment
 
 import com.google.android.material.navigation.NavigationView
 import com.pcs.lean.fragment.*
-import com.pcs.lean.model.Warning
+import com.pcs.lean.model.NuevaIncidencia
 
-const val FRAGMENT_WARNING: Int = 1
-const val FRAGMENT_OF_SELECTOR: Int = 2
-const val FRAGMENT_SETTINGS: Int = 3
-const val FRAGMENT_HISTORY: Int = 4
-const val FRAGMENT_INC_SELECTOR=5
+const val FRAGMENT_INCIDENCIAS = 1
+const val FRAGMENT_SETTINGS: Int = 2
+const val FRAGMENT_HISTORY: Int = 3
+const val FRAGMENT_NUEVA_INC: Int = 4
+const val FRAGMENT_OF_SELECTOR: Int = 5
+const val FRAGMENT_INC_SELECTOR = 6
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawerLayout: DrawerLayout
 
     lateinit var cache: ExpirableCache
-    var warning: Warning? = null
+    var nuevaIncidencia: NuevaIncidencia? = null
     var idApp: Int = 0
 
     private var currentFragment: Int =1
@@ -69,7 +71,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         toolbar.setNavigationOnClickListener{
             if(currentFragment== FRAGMENT_OF_SELECTOR || currentFragment == FRAGMENT_INC_SELECTOR)
-                navigateToHome()
+                navigateToNuevaIncidencia()
             else if (!drawerLayout.isDrawerOpen(GravityCompat.START))
                 drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -80,6 +82,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             if(currentFragment == FRAGMENT_OF_SELECTOR || currentFragment == FRAGMENT_INC_SELECTOR)
+                navigateToNuevaIncidencia()
+            else if(currentFragment == FRAGMENT_NUEVA_INC)
                 navigateToHome()
             else
                 super.onBackPressed()
@@ -88,7 +92,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_warning -> {
+            R.id.nav_incidencias -> {
                 navigateToHome()
             }
             R.id.nav_history -> {
@@ -116,12 +120,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun navigateToHome(){
         navigateToFragment(
-            fragment = WarningFragment(),
+            fragment = IncFragment(),
             allowStateLoss = false,
             containerViewId = R.id.fragment_container
         )
         title="Incidencias"
-        currentFragment = FRAGMENT_WARNING
+        currentFragment = FRAGMENT_INCIDENCIAS
+        changeActionBarButton(1)
+    }
+
+    fun navigateToNuevaIncidencia(){
+        navigateToFragment(
+            fragment = NuevaIncFragment(),
+            allowStateLoss = false,
+            containerViewId = R.id.fragment_container
+        )
+        currentFragment = FRAGMENT_NUEVA_INC
         changeActionBarButton(1)
     }
 

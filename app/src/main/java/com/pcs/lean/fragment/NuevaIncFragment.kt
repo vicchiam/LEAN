@@ -14,12 +14,12 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import com.pcs.lean.*
 import com.pcs.lean.model.OF
-import com.pcs.lean.model.Warning
+import com.pcs.lean.model.NuevaIncidencia
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
-class WarningFragment : Fragment(){
+class NuevaIncFragment : Fragment(){
 
     private lateinit var mainActivity: MainActivity
 
@@ -33,18 +33,18 @@ class WarningFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_warning, container, false)
+        val view = inflater.inflate(R.layout.fragment_nueva_inc, container, false)
 
-        mainActivity.warning=mainActivity.warning ?: Warning(Date())
+        mainActivity.nuevaIncidencia=mainActivity.nuevaIncidencia ?: NuevaIncidencia(Date())
 
-        makeEditTextDate(view, mainActivity.warning!!.date)
-        makeEditTextOFs(view, mainActivity.warning!!.of.orden)
-        makeEditTextIncs(view, mainActivity.warning!!.tipoIncidencia.nombre)
-        makeEdiTextMinutes(view, mainActivity.warning!!.minutos)
-        makeEditTextComentario(view, mainActivity.warning!!.comentario)
+        makeEditTextDate(view, mainActivity.nuevaIncidencia!!.date)
+        makeEditTextOFs(view, mainActivity.nuevaIncidencia!!.of.orden)
+        makeEditTextIncs(view, mainActivity.nuevaIncidencia!!.tipoIncidencia.nombre)
+        makeEdiTextMinutes(view, mainActivity.nuevaIncidencia!!.minutos)
+        makeEditTextComentario(view, mainActivity.nuevaIncidencia!!.comentario)
         makeSaveButton(view)
 
-        val linearLayout: LinearLayout = view.findViewById(R.id.fragment_warning)
+        val linearLayout: LinearLayout = view.findViewById(R.id.fragment_nueva_inc)
         linearLayout.setOnTouchListener{ _, _ ->
             Utils.closeKeyboard(context!!, mainActivity)
             true
@@ -79,7 +79,7 @@ class WarningFragment : Fragment(){
             DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
                 val aux: String=dayOfMonth.toString().padStart(2,'0')+"/"+(monthOfYear+1).toString().padStart(2,'0')+"/"+year.toString()
                 editText.setText(aux)
-                mainActivity.warning!!.date=Utils.stringToDate(aux)
+                mainActivity.nuevaIncidencia!!.date=Utils.stringToDate(aux)
                 resetOf()
             }
         editText.onRightDrawableClicked {
@@ -122,7 +122,7 @@ class WarningFragment : Fragment(){
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if(s.isNotEmpty())
-                    mainActivity.warning!!.minutos=s.toString().toInt()
+                    mainActivity.nuevaIncidencia!!.minutos=s.toString().toInt()
             }
         })
     }
@@ -137,30 +137,30 @@ class WarningFragment : Fragment(){
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if(s.isNotEmpty())
-                    mainActivity.warning!!.comentario=s.toString()
+                    mainActivity.nuevaIncidencia!!.comentario=s.toString()
             }
         })
     }
 
     private fun makeSaveButton(view: View){
-        val buttonSave: Button = view.findViewById(R.id.btn_warning)
+        val buttonSave: Button = view.findViewById(R.id.btn_save_nueva_inc)
         buttonSave.setOnClickListener{
-            if(!mainActivity.warning!!.isComplete())
+            if(!mainActivity.nuevaIncidencia!!.isComplete())
                 Utils.alert(context!!, "Faltan campos por rellenar")
             else
-                saveWarning()
+                saveNuevaIncidencia()
         }
     }
 
-    private fun saveWarning(){
-        var dialog = Utils.modalAlert(mainActivity, "Guardando")
-        val params = HashMap<String,String>();
+    private fun saveNuevaIncidencia(){
+        val dialog = Utils.modalAlert(mainActivity, "Guardando")
+        val params = HashMap<String,String>()
         params["action"]="add-inc"
         params["id_dispositivo"]=mainActivity.idApp.toString()
-        params["of"]=mainActivity.warning!!.of.orden
-        params["id_tipo_incidencia"]=mainActivity.warning!!.tipoIncidencia.id.toString()
-        params["minutos"]=mainActivity.warning!!.minutos.toString()
-        params["comentario"]=mainActivity.warning!!.comentario
+        params["of"]=mainActivity.nuevaIncidencia!!.of.orden
+        params["id_tipo_incidencia"]=mainActivity.nuevaIncidencia!!.tipoIncidencia.id.toString()
+        params["minutos"]=mainActivity.nuevaIncidencia!!.minutos.toString()
+        params["comentario"]=mainActivity.nuevaIncidencia!!.comentario
 
         val prefs: Prefs? = Prefs(context!!)
         val url = prefs?.settingsPath ?: ""
@@ -174,7 +174,8 @@ class WarningFragment : Fragment(){
                 if(context!=null) {
                     if (response == "ok") {
                         Utils.alert(context!!, "Incidencia guardada correctamente")
-                        resetWarning()
+                        mainActivity.cache.remove("inc")
+                        resetNuevaIncidencia()
                     }
                     dialog.dismiss()
                 }
@@ -187,13 +188,14 @@ class WarningFragment : Fragment(){
 
     private fun resetOf(){
         mainActivity.cache.remove("OFs")
-        mainActivity.warning!!.of=OF("","","")
+        mainActivity.nuevaIncidencia!!.of=OF("","","")
         val textView: TextView = view!!.findViewById(R.id.edit_ofs)
         textView.text=""
     }
 
-    private fun resetWarning(){
-        mainActivity.warning = Warning(Date())
+    private fun resetNuevaIncidencia(){
+        mainActivity.nuevaIncidencia = NuevaIncidencia(Date())
+        mainActivity.navigateToHome()
     }
 
 }

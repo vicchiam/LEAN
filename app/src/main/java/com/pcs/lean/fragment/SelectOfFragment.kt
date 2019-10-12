@@ -72,7 +72,7 @@ class SelectOfFragment: Fragment(){
         Router._GET(
             context = context!!,
             url = url,
-            params = "action=get-ofs&date=${Utils.dateToString(mainActivity.warning!!.date)}",
+            params = "action=get-ofs&date=${Utils.dateToString(mainActivity.nuevaIncidencia!!.date)}",
             responseListener = { response ->
                 if(context!=null) {
                     try {
@@ -99,7 +99,7 @@ class SelectOfFragment: Fragment(){
 
     fun setOF(of: OF){
         Utils.closeKeyboard(context!!, mainActivity)
-        mainActivity.warning!!.of=of
-        mainActivity.navigateToHome()
+        mainActivity.nuevaIncidencia!!.of=of
+        mainActivity.navigateToNuevaIncidencia()
     }
 }

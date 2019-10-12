@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item"
+    android:layout_width="match_parent"
+    android:layout_height="?listPreferredItemHeight"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@android:color/white"
+    android:layout_marginBottom="1dp"
+    android:padding="4dp"
+    android:foreground="?selectableItemBackground">
+
+    <TextView
+        android:id="@+id/of"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
+        android:text="OF"/>
+
+    <TextView
+        android:id="@+id/fecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/colorAccent"
+        android:textSize="14sp"
+        android:text="Fecha"/>
+
+    <TextView
+        android:id="@+id/tipo_incidencia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="60dp"
+        android:layout_below="@id/of"
+        android:layout_alignParentLeft="true"
+        android:text="Incidencia"/>
+
+    <TextView
+        android:id="@+id/minutos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fecha"
+        android:layout_alignParentRight="true"
+        android:textSize="14sp"
+        android:text="999"/>
+
+</RelativeLayout>

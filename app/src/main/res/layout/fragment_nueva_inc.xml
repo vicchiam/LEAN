@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/fragment_padding"
     android:orientation="vertical"
-    android:id="@+id/fragment_warning"
+    android:id="@+id/fragment_nueva_inc"
     android:clickable="true"
     android:focusableInTouchMode="true">
 
@@ -53,7 +53,7 @@
         android:hint="Introduce un comentario si lo deseas" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_warning"
+        android:id="@+id/btn_save_nueva_inc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
