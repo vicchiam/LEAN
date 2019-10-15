@@ -181,8 +181,10 @@ class NuevaIncFragment : Fragment(){
                 }
             },
             errorListener = { err ->
-                if(context!=null)
-                    Utils.alert(context!!,err)
+                if(context!=null) {
+                    Utils.alert(context!!, err)
+                    dialog.dismiss()
+                }
             })
     }
 

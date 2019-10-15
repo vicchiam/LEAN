@@ -13,9 +13,11 @@ import com.pcs.lean.model.Incidencia
 class IncAdapter: RecyclerView.Adapter<IncAdapter.ViewHolder>() {
 
     private lateinit var list: List<Incidencia>
+    private lateinit var clickListener: (Incidencia) -> Unit
 
-    fun IncAdapter(incFragment: IncFragment, list: List<Incidencia>){
+    fun IncAdapter(incFragment: IncFragment, list: List<Incidencia>, clickListener: (Incidencia) -> Unit){
         this.list = list
+        this.clickListener = clickListener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,7 +28,7 @@ class IncAdapter: RecyclerView.Adapter<IncAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         var item: Incidencia = list[position]
-        holder.bind(item)
+        holder.bind(item, clickListener)
     }
 
     override fun getItemCount(): Int {
@@ -39,11 +41,12 @@ class IncAdapter: RecyclerView.Adapter<IncAdapter.ViewHolder>() {
         private val tipoIncText: TextView = view.findViewById(R.id.tipo_incidencia)
         private val minutosText: TextView = view.findViewById(R.id.minutos)
 
-        fun bind(incidencia: Incidencia){
+        fun bind(incidencia: Incidencia, clickListener: (Incidencia) -> Unit){
             ofText.text = incidencia.OF
             fechaText.text = Utils.dateToString(incidencia.fecha)
             tipoIncText.text = incidencia.nombre
             minutosText.text = "Minutos: ${incidencia.minutos}"
+            itemView.setOnClickListener{ clickListener(incidencia) }
         }
 
     }

@@ -24,6 +24,19 @@ class Utils{
             builder.show()
         }
 
+        fun confirm(context: Context, message: String, yesEvent: () -> Unit){
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("¿Seguro?")
+            builder.setMessage(message)
+            builder.setPositiveButton("Si"){ dialog, _ ->
+                yesEvent()
+            }
+            builder.setNegativeButton("Cancelar"){ dialog, _ ->
+                dialog.cancel()
+            }
+            builder.show()
+        }
+
         fun stringToDate(text: String, delimiter: String = "/"): Date {
             val aux=text.split(delimiter)
             if(aux.size==3){

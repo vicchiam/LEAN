@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 
 import com.google.android.material.navigation.NavigationView
 import com.pcs.lean.fragment.*
+import com.pcs.lean.model.Incidencia
 import com.pcs.lean.model.NuevaIncidencia
 
 const val FRAGMENT_INCIDENCIAS = 1
@@ -20,6 +21,7 @@ const val FRAGMENT_HISTORY: Int = 3
 const val FRAGMENT_NUEVA_INC: Int = 4
 const val FRAGMENT_OF_SELECTOR: Int = 5
 const val FRAGMENT_INC_SELECTOR = 6
+const val FRAGMENT_SHOW_INC = 7
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -72,6 +74,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toolbar.setNavigationOnClickListener{
             if(currentFragment== FRAGMENT_OF_SELECTOR || currentFragment == FRAGMENT_INC_SELECTOR)
                 navigateToNuevaIncidencia()
+            else if(currentFragment == FRAGMENT_NUEVA_INC || currentFragment == FRAGMENT_SHOW_INC)
+                navigateToHome()
             else if (!drawerLayout.isDrawerOpen(GravityCompat.START))
                 drawerLayout.openDrawer(GravityCompat.START)
         }
@@ -83,7 +87,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             if(currentFragment == FRAGMENT_OF_SELECTOR || currentFragment == FRAGMENT_INC_SELECTOR)
                 navigateToNuevaIncidencia()
-            else if(currentFragment == FRAGMENT_NUEVA_INC)
+            else if(currentFragment == FRAGMENT_NUEVA_INC || currentFragment == FRAGMENT_SHOW_INC)
                 navigateToHome()
             else
                 super.onBackPressed()
@@ -136,7 +140,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             containerViewId = R.id.fragment_container
         )
         currentFragment = FRAGMENT_NUEVA_INC
-        changeActionBarButton(1)
+        title="Nueva Incidencia"
+        changeActionBarButton(2)
     }
 
     fun navigateToOFsSelector(){
@@ -158,6 +163,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         title="Selección de Incidebncia"
         currentFragment = FRAGMENT_INC_SELECTOR
+        changeActionBarButton(2)
+    }
+
+    fun navigateToShowInc(){
+        navigateToFragment(
+            fragment = ShowIncFragment(),
+            allowStateLoss = false,
+            containerViewId = R.id.fragment_container
+        )
+        title="Mostrar Incidencia"
+        currentFragment = FRAGMENT_SHOW_INC
         changeActionBarButton(2)
     }
 

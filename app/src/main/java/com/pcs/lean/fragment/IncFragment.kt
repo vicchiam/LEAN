@@ -53,11 +53,16 @@ class IncFragment: Fragment() {
             getIncidencias()
         }
         else{
-            incAdapter.IncAdapter(this, mainActivity.cache.get("inc") as List<Incidencia>)
+            incAdapter.IncAdapter(this, mainActivity.cache.get("inc") as List<Incidencia>, { incidenciaItem: Incidencia -> incidenciaCliclListener(incidenciaItem) })
             incRecyclerView.adapter = incAdapter
         }
 
         return view
+    }
+
+    private fun incidenciaCliclListener(incidencia: Incidencia){
+        mainActivity.cache.set("inc-show", incidencia)
+        mainActivity.navigateToShowInc()
     }
 
     private fun getIncidencias(){
@@ -76,7 +81,7 @@ class IncFragment: Fragment() {
                     try {
                         val list: List<Incidencia> = Utils.fromJson(response)
                         mainActivity.cache.set("inc", list)
-                        incAdapter.IncAdapter(this, list)
+                        incAdapter.IncAdapter(this, list, { incidenciaItem: Incidencia -> incidenciaCliclListener(incidenciaItem) })
                         incRecyclerView.adapter = incAdapter
                     }
                     catch (ex: JsonSyntaxException){
