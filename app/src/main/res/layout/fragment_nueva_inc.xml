@@ -1,67 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/fragment_padding"
-    android:orientation="vertical"
-    android:id="@+id/fragment_nueva_inc"
-    android:clickable="true"
-    android:focusableInTouchMode="true">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
 
-    <EditText
-        android:id="@+id/edit_date"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="date"
-        android:textColor="@color/colorPrimaryText"
-        android:drawableRight="@drawable/ic_today"/>
+        android:padding="@dimen/fragment_padding"
+        android:orientation="vertical"
+        android:id="@+id/fragment_nueva_inc"
+        android:clickable="true"
+        android:focusableInTouchMode="true">
 
-    <EditText
-        android:id="@+id/edit_ofs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:inputType="text"
-        android:textColor="@color/colorPrimaryText"
-        android:drawableRight="@drawable/ic_search"
-        android:hint="Indique una OF"/>
+        <EditText
+            android:id="@+id/edit_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:textColor="@color/colorPrimaryText"
+            android:drawableRight="@drawable/ic_today"/>
 
-    <EditText
-        android:id="@+id/edit_incidencia"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:inputType="text"
-        android:textColor="@color/colorPrimaryText"
-        android:drawableRight="@drawable/ic_search"
-        android:hint="Indique una incidencia"/>
+        <EditText
+            android:id="@+id/edit_ofs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:inputType="text"
+            android:textColor="@color/colorPrimaryText"
+            android:drawableRight="@drawable/ic_search"
+            android:hint="Indique una OF"/>
 
-    <EditText
-        android:id="@+id/edit_minutos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:inputType="number"
-        android:hint="Indique los minutos" />
+        <EditText
+            android:id="@+id/edit_incidencia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:inputType="text"
+            android:textColor="@color/colorPrimaryText"
+            android:drawableRight="@drawable/ic_search"
+            android:hint="Indique una incidencia"/>
 
-    <EditText
-        android:id="@+id/edit_comentario"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:inputType="text"
-        android:hint="Introduce un comentario si lo deseas" />
+        <EditText
+            android:id="@+id/edit_minutos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:inputType="number"
+            android:hint="Indique los minutos" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_save_nueva_inc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:layout_gravity="end"
-        android:padding="10dp"
-        android:textColor="@android:color/white"
-        android:text="Guardar"
-        style="@style/Widget.MaterialComponents.Button"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"/>
+        <EditText
+            android:id="@+id/edit_comentario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:inputType="text"
+            android:hint="Introduce un comentario si lo deseas" />
 
-</LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_nueva_inc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:textColor="@android:color/white"
+            android:text="Guardar"
+            style="@style/Widget.MaterialComponents.Button"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Button"/>
+
+    </LinearLayout>
+</ScrollView>

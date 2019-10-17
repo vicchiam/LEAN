@@ -53,7 +53,7 @@ class SelectIncFragment: Fragment() {
         if(mainActivity.cache.get("type-inc")==null)
             getIncidencias()
         else{
-            typeIncAdapter.IncAdapter(this, (mainActivity.cache.get("inc") as MutableList<TipoIncidencia>) )
+            typeIncAdapter.IncAdapter(this, (mainActivity.cache.get("type-inc") as MutableList<TipoIncidencia>) )
             incRecyclerView.adapter = typeIncAdapter
         }
 
